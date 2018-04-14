@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}{% endblock title %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col">
+      <h1>{{ stock }} ${{ stock.prices.first.close|floatformat:"2" }}</h1>
+      <table class="table table-bordered table-hover table-striped table-sm">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Open</th>
+            <th scope="col">High</th>
+            <th scope="col">Low</th>
+            <th scope="col">Close / Last</th>
+            <th scope="col">Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for price in object_list %}
+            <tr>
+              <td>{{ price.date|date:"m/d/Y" }}</td>
+              <td>{{ price.open }}</td>
+              <td>{{ price.high }}</td>
+              <td>{{ price.low }}</td>
+              <td>{{ price.close|floatformat:"2" }}</td>
+              <td>{{ price.volume|intcomma }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endblock content %}

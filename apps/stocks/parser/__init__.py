@@ -25,7 +25,7 @@ class NasdaqParser:
 
     def __init__(self, threads: int):
         self.threads = threads
-        self.stocks_prices_url = 'https://www.nasdaq.com/{stock}/historical'
+        self.stocks_prices_url = 'https://www.nasdaq.com/symbol/{stock}/historical'
         self.insider_trades_url = 'https://www.nasdaq.com/symbol/{stock}/insider-trades'
 
     def get_html_content(self, url: str) -> BeautifulSoup:
