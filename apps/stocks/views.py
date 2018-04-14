@@ -2,10 +2,10 @@ from django.views.generic import ListView
 from django.views.generic.detail import SingleObjectMixin
 
 from .mixins import JsonResponseMixin
-from .models import Stock
+from .models import Stock, Trade
 
 __all__ = ['stocks_list_view', 'stocks_list_api_view', 'stock_prices_list_view',
-           'stock_prices_list_api_view']
+           'stock_prices_list_api_view', 'stock_insiders_list_view']
 
 
 class StocksListView(ListView):
@@ -42,3 +42,19 @@ class StockPricesListAPIView(JsonResponseMixin, StockPricesListView):
     pass
 
 stock_prices_list_api_view = StockPricesListAPIView.as_view()
+
+
+class StockInsidersListView(SingleObjectMixin, ListView):
+    template_name = 'stocks/stock_insiders.html'
+    queryset = Stock.objects.all()
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=self.queryset)
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Trade.objects.filter(insider_relation__stock=self.object).reverse()
+
+stock_insiders_list_view = StockInsidersListView.as_view()

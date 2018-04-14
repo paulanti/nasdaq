@@ -12,4 +12,6 @@ urlpatterns = [
     path('<str:name>/', stock_prices_list_view, name='prices'),
     # {% url('stocks:api_prices') stock.name %}
     path('api/<str:name>/', stock_prices_list_api_view, name='api_prices'),
+    # {% url('stocks:insider') stock.name %}
+    path('<str:name>/insider/', stock_insiders_list_view, name='insiders_list'),
 ]

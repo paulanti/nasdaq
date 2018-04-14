@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 {% load humanize %}
 
-{% block title %}{% endblock title %}
+{% block title %}{{ block.super }} - Historical Stock Prices{% endblock title %}
 
 {% block content %}
 
   <div class="row">
     <div class="col">
       <h1>{{ stock }} ${{ stock.prices.first.close|floatformat:"2" }}</h1>
+      <h6><a href="{% url 'stocks:insiders_list' stock.name %}">{{ stock }} Insider Activity</a></h6>
       <table class="table table-bordered table-hover table-striped table-sm">
         <thead class="thead-light">
           <tr>

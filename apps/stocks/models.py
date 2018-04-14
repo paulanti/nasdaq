@@ -143,3 +143,6 @@ class Trade(models.Model):
     shares_held = models.IntegerField(
         default=0
     )
+
+    class Meta:
+        ordering = ('last_date', 'insider_relation__insider__full_name')
