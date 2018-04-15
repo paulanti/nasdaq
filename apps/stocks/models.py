@@ -1,5 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.urls import reverse
 from model_utils import Choices
 
 
@@ -17,6 +18,9 @@ class Stock(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('stocks:prices', kwargs={'name': self.name})
 
 
 class Price(models.Model):

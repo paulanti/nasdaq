@@ -7,7 +7,7 @@
     <div class="col-8">
       <div class="tab-content" id="nav-tabContent">
         {% for stock in stocks %}
-          <a href="{% url 'stocks:prices' stock.name %}" class="list-group-item d-flex justify-content-between align-items-center">
+          <a href="{{ stock.get_absolute_url }}" class="list-group-item d-flex justify-content-between align-items-center">
             {{ stock.name }}
           </a>
         {% endfor %}

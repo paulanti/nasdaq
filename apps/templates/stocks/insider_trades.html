@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% load humanize %}
 
-{% block title %}{{ block.super }} - Insider Activity{% endblock title %}
+{% block title %}{{ block.super }} - {{ insider }} Insider Trades{% endblock title %}
 
 {% block content %}
 
   <div class="row">
     <div class="col">
-      <h1>{{ stock }} Insider Activity</h1>
+      <h1>Insider Trades of {{ insider }}</h1>
       <table class="table table-bordered table-hover table-striped table-sm">
         <thead class="thead-light">
           <tr>
-            <th scope="col">Insider</th>
+            <th scope="col">Company</th>
             <th scope="col">Relation</th>
             <th scope="col">Last Date</th>
             <th scope="col">Transaction Type</th>
@@ -24,7 +24,7 @@
         <tbody>
           {% for trade in object_list %}
             <tr>
-              <td><a href="{% url 'stocks:insider_trades' stock.name trade.insider_relation.insider.slug %}">{{ trade.insider_relation.insider }}</a></td>
+              <td><a href="{{ trade.insider_relation.stock.get_absolute_url }}">{{ trade.insider_relation.stock }}</a></td>
               <td>{{ trade.insider_relation.get_position_display }}</td>
               <td>{{ trade.last_date|date:"m/d/Y" }}</td>
               <td>{{ trade.transaction_type }}</td>
@@ -40,4 +40,3 @@
   </div>
 
 {% endblock content %}
-

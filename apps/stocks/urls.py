@@ -9,9 +9,11 @@ urlpatterns = [
     # {% url('stocks:api_list') %}
     path('api/', stocks_list_api_view, name='api_list'),
     # {% url('stocks:prices') stock.name %}
-    path('<str:name>/', stock_prices_list_view, name='prices'),
+    path('<slug:name>/', stock_prices_list_view, name='prices'),
     # {% url('stocks:api_prices') stock.name %}
-    path('api/<str:name>/', stock_prices_list_api_view, name='api_prices'),
-    # {% url('stocks:insider') stock.name %}
+    path('api/<slug:name>/', stock_prices_list_api_view, name='api_prices'),
+    # {% url('stocks:insiders_list') stock.name %}
     path('<str:name>/insider/', stock_insiders_list_view, name='insiders_list'),
+    # {% url('stocks:insider_trades') stock.name, insider.slug %}
+    path('<str:name>/insider/<slug:slug>/', insider_trades_list_view, name='insider_trades'),
 ]
