@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}{{ block.super }} - Historical Stock Prices Analytics{% endblock title %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col">
+      <h1>{{ stock }} Analytics</h1>
+      <h6><a href="{% url 'stocks:insiders_list' stock.name %}">{{ stock }} Insider Activity</a></h6>
+      <table class="table table-bordered table-hover table-striped table-sm">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Dates</th>
+            <th scope="col">Delta Open</th>
+            <th scope="col">Delta High</th>
+            <th scope="col">Delta Low</th>
+            <th scope="col">Delta Close / Last</th>
+            <th scope="col">Delta Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ request.GET.date_to }} - {{ request.GET.date_from }}</td>
+            <td>{{ delta_open }}</td>
+            <td>{{ delta_high }}</td>
+            <td>{{ delta_low }}</td>
+            <td>{{ delta_close }}</td>
+            <td>{{ delta_volume|intcomma }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endblock content %}
