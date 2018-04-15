@@ -1,0 +1,43 @@
+{% load humanize %}
+
+<div class="row">
+  <div class="col">
+    {% block heading %}{% endblock heading %}
+    <table class="table table-bordered table-hover table-striped table-sm">
+      <thead class="thead-light">
+        <tr>
+          {% if page == 'insiders' %}
+            <th scope="col">Insider</th>
+          {% else %}
+            <th scope="col">Company</th>
+          {% endif %}
+          <th scope="col">Relation</th>
+          <th scope="col">Last Date</th>
+          <th scope="col">Transaction Type</th>
+          <th scope="col">OwnerType</th>
+          <th scope="col">Shares Traded</th>
+          <th scope="col">Last Price</th>
+          <th scope="col">Shares Held</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for trade in object_list %}
+          <tr>
+            {% if page == 'insiders' %}
+              <td><a href="{% url 'stocks:insider_trades' stock.name trade.insider_relation.insider.slug %}">{{ trade.insider_relation.insider }}</a></td>
+            {% else %}
+              <td><a href="{{ trade.insider_relation.stock.get_absolute_url }}">{{ trade.insider_relation.stock }}</a></td>
+            {% endif %}
+            <td>{{ trade.insider_relation.get_position_display }}</td>
+            <td>{{ trade.last_date|date:"m/d/Y" }}</td>
+            <td>{{ trade.transaction_type }}</td>
+            <td>{{ trade.get_owner_type_display }}</td>
+            <td>{{ trade.shares_traded|intcomma }}</td>
+            <td>{% if trade.last_price %}{{ trade.last_price|intcomma }}{% endif %}</td>
+            <td>{{ trade.shares_held|intcomma }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

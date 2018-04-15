@@ -1,42 +1,10 @@
 {% extends 'base.html' %}
-{% load humanize %}
 
 {% block title %}{{ block.super }} - {{ insider }} Insider Trades{% endblock title %}
 
 {% block content %}
 
-  <div class="row">
-    <div class="col">
-      <h1>Insider Trades of {{ insider }}</h1>
-      <table class="table table-bordered table-hover table-striped table-sm">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col">Company</th>
-            <th scope="col">Relation</th>
-            <th scope="col">Last Date</th>
-            <th scope="col">Transaction Type</th>
-            <th scope="col">OwnerType</th>
-            <th scope="col">Shares Traded</th>
-            <th scope="col">Last Price</th>
-            <th scope="col">Shares Held</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for trade in object_list %}
-            <tr>
-              <td><a href="{{ trade.insider_relation.stock.get_absolute_url }}">{{ trade.insider_relation.stock }}</a></td>
-              <td>{{ trade.insider_relation.get_position_display }}</td>
-              <td>{{ trade.last_date|date:"m/d/Y" }}</td>
-              <td>{{ trade.transaction_type }}</td>
-              <td>{{ trade.get_owner_type_display }}</td>
-              <td>{{ trade.shares_traded|intcomma }}</td>
-              <td>{% if trade.last_price %}{{ trade.last_price|intcomma }}{% endif %}</td>
-              <td>{{ trade.shares_held|intcomma }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
+  {% block heading %}<h1>Insider Trades of {{ insider }}</h1>{% endblock heading %}
+  {% include 'stocks/insider_base.html' %}
 
 {% endblock content %}
