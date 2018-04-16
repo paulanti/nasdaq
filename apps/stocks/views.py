@@ -10,9 +10,9 @@ from .mixins import JsonResponseMixin
 from .models import Stock, Trade, Insider
 
 __all__ = (
-    'stocks_list_view', 'stocks_list_api_view', 'stock_prices_list_view',
-    'stock_prices_list_api_view', 'stock_insiders_list_view', 'stock_insiders_list_api_view',
-    'insider_trades_list_view', 'insider_trades_list_api_view', 'stock_prices_analytics_view',
+    'stocks_list_view', 'stock_prices_list_view', 'stock_prices_list_api_view',
+    'stock_insiders_list_view', 'stock_insiders_list_api_view', 'insider_trades_list_view',
+    'insider_trades_list_api_view', 'stock_prices_analytics_view',
     'stock_prices_analytics_api_view'
 )
 
@@ -23,12 +23,6 @@ class StocksListView(ListView):
     template_name = 'stocks/stocks_list.html'
 
 stocks_list_view = StocksListView.as_view()
-
-
-class StocksListAPIView(JsonResponseMixin, StocksListView):
-    pass
-
-stocks_list_api_view = StocksListAPIView.as_view()
 
 
 class StockPricesListView(SingleObjectMixin, ListView):

@@ -1,6 +1,7 @@
 from django.urls import path, include
 
 from .views import *
+from .api.views import *
 
 app_name = 'stocks'
 urlpatterns = [
