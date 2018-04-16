@@ -6,14 +6,11 @@ from django.http import Http404, HttpResponse
 from django.views.generic import ListView
 from django.views.generic.detail import SingleObjectMixin
 
-from .mixins import JsonResponseMixin
 from .models import Stock, Trade, Insider
 
 __all__ = (
-    'stocks_list_view', 'stock_prices_list_view', 'stock_prices_list_api_view',
-    'stock_insiders_list_view', 'stock_insiders_list_api_view', 'insider_trades_list_view',
-    'insider_trades_list_api_view', 'stock_prices_analytics_view',
-    'stock_prices_analytics_api_view'
+    'stocks_list_view', 'stock_prices_list_view', 'stock_insiders_list_view',
+    'insider_trades_list_view', 'stock_prices_analytics_view', 'stock_prices_analytics_api_view'
 )
 
 
@@ -41,12 +38,6 @@ class StockPricesListView(SingleObjectMixin, ListView):
 stock_prices_list_view = StockPricesListView.as_view()
 
 
-class StockPricesListAPIView(JsonResponseMixin, StockPricesListView):
-    pass
-
-stock_prices_list_api_view = StockPricesListAPIView.as_view()
-
-
 class StockInsidersListView(SingleObjectMixin, ListView):
     template_name = 'stocks/stock_insiders.html'
     queryset = Stock.objects.all()
@@ -63,12 +54,6 @@ class StockInsidersListView(SingleObjectMixin, ListView):
 stock_insiders_list_view = StockInsidersListView.as_view()
 
 
-class StockInsidersListAPIView(JsonResponseMixin, StockInsidersListView):
-    pass
-
-stock_insiders_list_api_view = StockInsidersListAPIView.as_view()
-
-
 class InsiderTradesListView(SingleObjectMixin, ListView):
     template_name = 'stocks/insider_trades.html'
     queryset = Insider.objects.all()
@@ -81,12 +66,6 @@ class InsiderTradesListView(SingleObjectMixin, ListView):
         return Trade.objects.filter(insider_relation__insider=self.object).reverse()
 
 insider_trades_list_view = InsiderTradesListView.as_view()
-
-
-class InsiderTradesListAPIView(JsonResponseMixin, InsiderTradesListView):
-    pass
-
-insider_trades_list_api_view = InsiderTradesListAPIView.as_view()
 
 
 class StockPricesAnalyticsView(StockPricesListView):
