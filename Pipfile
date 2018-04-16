@@ -10,6 +10,7 @@ django-model-utils = "*"
 "beautifulsoup4" = "*"
 lxml = "*"
 requests = "*"
+django-rest-framework = "*"
 
 [dev-packages]
 
