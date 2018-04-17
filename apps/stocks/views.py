@@ -1,8 +1,4 @@
-import json
-
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.views.generic import ListView
 from django.views.generic.detail import SingleObjectMixin
 
@@ -10,7 +6,7 @@ from .models import Stock, Trade, Insider
 
 __all__ = (
     'stocks_list_view', 'stock_prices_list_view', 'stock_insiders_list_view',
-    'insider_trades_list_view', 'stock_prices_analytics_view', 'stock_prices_analytics_api_view'
+    'insider_trades_list_view', 'stock_prices_analytics_view'
 )
 
 
@@ -77,29 +73,7 @@ class StockPricesAnalyticsView(StockPricesListView):
         return super().get_object(queryset)
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        get_params = self.request.GET
-        date_from = get_params.get('date_from')
-        date_to = get_params.get('date_to')
-        return qs.filter(Q(date__date=date_from) | Q(date__date=date_to))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        last_price = self.object_list.first()
-        first_price = self.object_list.last()
-        self.prices = ('open', 'high', 'low', 'close', 'volume')
-        for price in self.prices:
-            context[f'delta_{price}'] = getattr(last_price, price) - getattr(first_price, price)
-        print(context)
-        return context
+        qs = super().get_queryset().reverse()
+        return qs.get_delta_between_dates(self.request)
 
 stock_prices_analytics_view = StockPricesAnalyticsView.as_view()
-
-
-class StockPricesAnalyticsAPIView(StockPricesAnalyticsView):
-    def render_to_response(self, context, **response_kwargs):
-        data = {f'delta_{price}': context[f'delta_{price}'] for price in self.prices}
-        data = json.dumps(data, cls=DjangoJSONEncoder)
-        return HttpResponse(data, content_type='application/json')
-
-stock_prices_analytics_api_view = StockPricesAnalyticsAPIView.as_view()

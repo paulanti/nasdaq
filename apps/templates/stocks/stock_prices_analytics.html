@@ -1,37 +1,36 @@
-{% extends 'base.html' %}
+{% extends 'stocks/stock_prices.html' %}
 {% load humanize %}
 
 {% block title %}{{ block.super }} - Historical Stock Prices Analytics{% endblock title %}
 
 {% block content %}
-
-  <div class="row">
-    <div class="col">
-      <h1>{{ stock }} Analytics</h1>
-      <h6><a href="{% url 'stocks:insiders_list' stock.name %}">{{ stock }} Insider Activity</a></h6>
-      <table class="table table-bordered table-hover table-striped table-sm">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col">Dates</th>
-            <th scope="col">Delta Open</th>
-            <th scope="col">Delta High</th>
-            <th scope="col">Delta Low</th>
-            <th scope="col">Delta Close / Last</th>
-            <th scope="col">Delta Volume</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{ request.GET.date_to }} - {{ request.GET.date_from }}</td>
-            <td>{{ delta_open }}</td>
-            <td>{{ delta_high }}</td>
-            <td>{{ delta_low }}</td>
-            <td>{{ delta_close }}</td>
-            <td>{{ delta_volume|intcomma }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
+  {{ block.super }}
 {% endblock content %}
+
+{% block heading %}
+  <h1>{{ stock }} Analytics</h1>
+{% endblock heading %}
+
+{% block delta %}
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Delta</th>
+        <th scope="col">&#9651; Open</th>
+        <th scope="col">&#9651; High</th>
+        <th scope="col">&#9651; Low</th>
+        <th scope="col">&#9651; Close / Last</th>
+        <th scope="col">&#9651; Volume</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="hidden"></td>
+        <td>{{ object_list.last.delta_open }}</td>
+        <td>{{ object_list.last.delta_high }}</td>
+        <td>{{ object_list.last.delta_low }}</td>
+        <td>{{ object_list.last.delta_close }}</td>
+        <td>{{ object_list.last.delta_volume|intcomma }}</td>
+      </tr>
+    </tbody>
+{% endblock delta %}
+

@@ -3,6 +3,8 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from model_utils import Choices
 
+from .querysets import PriceQuerySet
+
 
 class Stock(models.Model):
     name = models.CharField(
@@ -59,6 +61,8 @@ class Price(models.Model):
     volume = models.IntegerField(
         default=0
     )
+
+    objects = PriceQuerySet.as_manager()
 
     def __str__(self):
         return f'{self.stock.name} ({self.date.strftime("%m/%d/%Y")})'

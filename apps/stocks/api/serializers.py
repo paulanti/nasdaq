@@ -45,3 +45,30 @@ class InsiderTradesSerializer(TradeSerializer):
 
     def get_company(self, obj):
         return obj.insider_relation.stock.name
+
+
+class PriceAnalyticsSerializer(PriceSerializer):
+    delta_open = serializers.SerializerMethodField()
+    delta_high = serializers.SerializerMethodField()
+    delta_low = serializers.SerializerMethodField()
+    delta_close = serializers.SerializerMethodField()
+    delta_volume = serializers.SerializerMethodField()
+
+    class Meta(PriceSerializer.Meta):
+        fields = PriceSerializer.Meta.fields + ('delta_open', 'delta_high', 'delta_low',
+                                                'delta_close', 'delta_volume')
+
+    def get_delta_open(self, obj):
+        return obj.delta_open
+
+    def get_delta_high(self, obj):
+        return obj.delta_high
+
+    def get_delta_low(self, obj):
+        return obj.delta_low
+
+    def get_delta_close(self, obj):
+        return obj.delta_close
+
+    def get_delta_volume(self, obj):
+        return obj.delta_volume

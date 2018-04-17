@@ -1,11 +1,12 @@
 from rest_framework.generics import ListAPIView
 
 from ..models import Stock, Price, Trade
-from .serializers import StockSerializer, PriceSerializer, TradeSerializer, InsiderTradesSerializer
+from .serializers import StockSerializer, PriceSerializer, TradeSerializer, InsiderTradesSerializer, \
+    PriceAnalyticsSerializer
 
 __all__ = (
     'stocks_list_api_view', 'stock_prices_list_api_view', 'stock_insiders_list_api_view',
-    'insider_trades_list_api_view'
+    'insider_trades_list_api_view', 'stock_prices_analytics_api_view'
 )
 
 
@@ -48,3 +49,13 @@ class InsiderTradesListAPIView(StockInsidersListAPIView):
     lookup_url_kwarg = 'slug'
 
 insider_trades_list_api_view = InsiderTradesListAPIView.as_view()
+
+
+class StockPricesAnalyticsAPIView(StockPricesListAPIView):
+    serializer_class = PriceAnalyticsSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.get_delta_between_dates(self.request)
+
+stock_prices_analytics_api_view = StockPricesAnalyticsAPIView.as_view()
