@@ -19,7 +19,7 @@ class Stock(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.name.upper()
 
     def get_absolute_url(self):
         return reverse('stocks:prices', kwargs={'name': self.name})
