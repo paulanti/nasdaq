@@ -14,6 +14,7 @@ urlpatterns = [
         path('', stock_prices_list_view, name='prices'),
         # {% url('stocks:prices_analytics') stock.name %}
         path('analytics/', stock_prices_analytics_view, name='prices_analytics'),
+        path('delta/', stock_prices_delta_view, name='prices_delta'),
         path('insider/', include([
             # {% url('stocks:insiders_list') stock.name %}
             path('', stock_insiders_list_view, name='insiders_list'),

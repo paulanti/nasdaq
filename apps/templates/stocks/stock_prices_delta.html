@@ -1,0 +1,45 @@
+{% extends 'stocks/stock_prices.html' %}
+{% load humanize %}
+
+{% block title %}{{ block.super }} - Historical Stock Prices Analytics{% endblock title %}
+
+{% block content %}
+  {{ block.super }}
+{% endblock content %}
+
+{% block heading %}
+  <h1>{{ stock }} Analytics</h1>
+{% endblock heading %}
+
+{% block delta %}
+  <tbody>
+    <tr>
+      <td class="hidden">Absolute Delta</td>
+      {% if request.GET.type == 'open' %}
+        <td>{{ object_list.last.values_delta }}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      {% elif request.GET.type == 'high' %}
+        <td></td>
+        <td>{{ object_list.last.values_delta }}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      {% elif request.GET.type == 'low' %}
+        <td></td>
+        <td></td>
+        <td>{{ object_list.last.values_delta }}</td>
+        <td></td>
+        <td></td>
+      {% elif request.GET.type == 'close' %}
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>{{ object_list.last.values_delta }}</td>
+        <td></td>
+      {% endif %}
+    </tr>
+  </tbody>
+{% endblock delta %}

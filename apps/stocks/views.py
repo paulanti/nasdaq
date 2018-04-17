@@ -6,7 +6,7 @@ from .models import Stock, Trade, Insider
 
 __all__ = (
     'stocks_list_view', 'stock_prices_list_view', 'stock_insiders_list_view',
-    'insider_trades_list_view', 'stock_prices_analytics_view'
+    'insider_trades_list_view', 'stock_prices_analytics_view', 'stock_prices_delta_view'
 )
 
 
@@ -77,3 +77,18 @@ class StockPricesAnalyticsView(StockPricesListView):
         return qs.get_delta_between_dates(self.request)
 
 stock_prices_analytics_view = StockPricesAnalyticsView.as_view()
+
+
+class StockPricesDeltaView(StockPricesListView):
+    template_name = 'stocks/stock_prices_delta.html'
+
+    def get_object(self, queryset=None):
+        if 'value' not in self.request.GET or 'type' not in self.request.GET:
+            raise Http404('Value and type aren\'t specified')
+        return super().get_object(queryset)
+
+    def get_queryset(self):
+        qs = super().get_queryset().reverse()
+        return qs.get_prices_for_delta(self.request)
+
+stock_prices_delta_view = StockPricesDeltaView.as_view()
