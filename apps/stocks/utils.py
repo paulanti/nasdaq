@@ -32,12 +32,12 @@ def get_min_period_with_delta_price(prices: QuerySet, value: str, price_type: st
             result_list.append(
                 {'period': [start_period['date'], end_period['date']],
                  'ids': [start_period['id'], end_period['id']],
-                 'values_delta': end_period['sum_delta'] - start_period['sum_delta'],
+                 'absolute_delta': end_period['sum_delta'] - start_period['sum_delta'],
                  'delta_days': abs(start_period['date'] - end_period['date']).days}
             )
     # определяем периоды подходящие под условие и сортируем по величине периода (т.е. разнице в
     # днях между начальной и конечной датами)
-    periods = sorted([x for x in result_list if x['values_delta'] > Decimal(value)],
+    periods = sorted([x for x in result_list if x['absolute_delta'] > Decimal(value)],
                      key=lambda x: x['delta_days'])
     if periods:
         return periods[0]

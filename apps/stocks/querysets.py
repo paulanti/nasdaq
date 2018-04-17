@@ -57,8 +57,8 @@ class PriceQuerySet(models.QuerySet):
         data = get_min_period_with_delta_price(qs, value, price_type)
         if data:
             period = sorted(data['period'])
-            values_delta = data['values_delta']
+            absolute_delta = data['absolute_delta']
             return qs.filter(date__gte=period[0], date__lte=period[1]).annotate(
-                values_delta=Value(values_delta, output_field=DecimalField())
+                absolute_delta=Value(absolute_delta, output_field=DecimalField())
             )
         return qs.none()

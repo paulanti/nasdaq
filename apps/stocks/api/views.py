@@ -1,12 +1,14 @@
+from django.http import Http404
 from rest_framework.generics import ListAPIView
 
 from ..models import Stock, Price, Trade
-from .serializers import StockSerializer, PriceSerializer, TradeSerializer, InsiderTradesSerializer, \
-    PriceAnalyticsSerializer
+from .serializers import (StockSerializer, PriceSerializer, TradeSerializer,
+                          InsiderTradesSerializer, PriceAnalyticsSerializer, PriceDeltaSerializer)
 
 __all__ = (
     'stocks_list_api_view', 'stock_prices_list_api_view', 'stock_insiders_list_api_view',
-    'insider_trades_list_api_view', 'stock_prices_analytics_api_view'
+    'insider_trades_list_api_view', 'stock_prices_analytics_api_view',
+    'stock_prices_delta_api_view'
 )
 
 
@@ -59,3 +61,15 @@ class StockPricesAnalyticsAPIView(StockPricesListAPIView):
         return qs.get_delta_between_dates(self.request)
 
 stock_prices_analytics_api_view = StockPricesAnalyticsAPIView.as_view()
+
+
+class StockPricesDeltaAPIView(StockPricesListAPIView):
+    serializer_class = PriceDeltaSerializer
+
+    def get_queryset(self):
+        if 'value' not in self.request.GET or 'type' not in self.request.GET:
+            raise Http404('Value and type aren\'t specified')
+        qs = super().get_queryset().reverse()
+        return qs.get_prices_for_delta(self.request)
+
+stock_prices_delta_api_view = StockPricesDeltaAPIView.as_view()

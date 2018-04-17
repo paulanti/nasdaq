@@ -14,6 +14,7 @@ urlpatterns = [
         path('', stock_prices_list_view, name='prices'),
         # {% url('stocks:prices_analytics') stock.name %}
         path('analytics/', stock_prices_analytics_view, name='prices_analytics'),
+        # {% url('stocks:prices_delta') stock.name %}
         path('delta/', stock_prices_delta_view, name='prices_delta'),
         path('insider/', include([
             # {% url('stocks:insiders_list') stock.name %}
@@ -27,6 +28,8 @@ urlpatterns = [
         path('', stock_prices_list_api_view, name='api_prices'),
         # {% url('stocks:api_prices_analytics') stock.name %}
         path('analytics/', stock_prices_analytics_api_view, name='api_prices_analytics'),
+        # {% url('stocks:api_prices_delta') stock.name %}
+        path('delta/', stock_prices_delta_api_view, name='api_prices_delta'),
         path('insider/', include([
             # {% url('stocks:api_insiders_list') stock.name %}
             path('', stock_insiders_list_api_view, name='api_insiders_list'),

@@ -72,3 +72,13 @@ class PriceAnalyticsSerializer(PriceSerializer):
 
     def get_delta_volume(self, obj):
         return obj.delta_volume
+
+
+class PriceDeltaSerializer(PriceSerializer):
+    absolute_delta = serializers.SerializerMethodField()
+
+    class Meta(PriceSerializer.Meta):
+        fields = PriceSerializer.Meta.fields + ('absolute_delta',)
+
+    def get_absolute_delta(self, obj):
+        return obj.absolute_delta
