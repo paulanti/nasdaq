@@ -13,6 +13,7 @@ requests = "*"
 django-rest-framework = "*"
 
 [dev-packages]
+django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.6"

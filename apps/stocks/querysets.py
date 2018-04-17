@@ -62,3 +62,9 @@ class PriceQuerySet(models.QuerySet):
                 absolute_delta=Value(absolute_delta, output_field=DecimalField())
             )
         return qs.none()
+
+
+class TradeQuerySet(models.QuerySet):
+
+    def default(self):
+        return self.select_related('insider_relation__insider', 'insider_relation__stock')

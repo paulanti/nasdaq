@@ -3,7 +3,7 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from model_utils import Choices
 
-from .querysets import PriceQuerySet
+from .querysets import PriceQuerySet, TradeQuerySet
 
 
 class Stock(models.Model):
@@ -151,6 +151,8 @@ class Trade(models.Model):
     shares_held = models.IntegerField(
         default=0
     )
+
+    objects = TradeQuerySet.as_manager()
 
     class Meta:
         ordering = ('last_date', 'insider_relation__insider__full_name')

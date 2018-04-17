@@ -45,7 +45,7 @@ class StockInsidersListView(SingleObjectMixin, ListView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Trade.objects.filter(insider_relation__stock=self.object).reverse()
+        return Trade.objects.filter(insider_relation__stock=self.object).default().reverse()
 
 stock_insiders_list_view = StockInsidersListView.as_view()
 
@@ -59,7 +59,7 @@ class InsiderTradesListView(SingleObjectMixin, ListView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Trade.objects.filter(insider_relation__insider=self.object).reverse()
+        return Trade.objects.filter(insider_relation__insider=self.object).default().reverse()
 
 insider_trades_list_view = InsiderTradesListView.as_view()
 
