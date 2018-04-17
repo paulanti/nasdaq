@@ -1,7 +1,6 @@
-from itertools import repeat
-from multiprocessing.pool import ThreadPool
-from typing import List
+from typing import List, Tuple
 
+import itertools
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -20,13 +19,35 @@ class NasdaqParser:
     """Класс для парсинга Nasdaq.com
 
     Attributes:
-        threads (int): Количество потоков для парсинга
+        stocks (list): Список акций для парсинга
     """
 
-    def __init__(self, threads: int):
-        self.threads = threads
+    def __init__(self, stocks: List):
+        self.stocks = stocks
         self.stocks_prices_url = 'https://www.nasdaq.com/symbol/{stock}/historical'
-        self.insider_trades_url = 'https://www.nasdaq.com/symbol/{stock}/insider-trades'
+        self.insider_trades_url = 'https://www.nasdaq.com/symbol/{stock}/insider-trades?page={n}'
+
+    def get_prices_urls(self) -> List:
+        """Возвращает urls страниц с ценами акций
+
+        Return:
+            List
+        """
+        prices_urls = [(stock.lower(), self.stocks_prices_url.format(stock=stock.lower()))
+                       for stock in self.stocks]
+        return prices_urls
+
+    def get_trades_urls(self) -> List:
+        """Возвращает urls страниц с данными о продажах акций владельцами компаний
+
+        Return:
+            List
+        """
+        page_numbers = list(range(1, 11))
+        pages_stocks = sorted(list(itertools.product(page_numbers, self.stocks)), key=lambda x: x[1])
+        trades_urls = [(stock.lower(), self.insider_trades_url.format(stock=stock.lower(), n=n))
+                       for (n, stock) in pages_stocks]
+        return trades_urls
 
     def get_html_content(self, url: str) -> BeautifulSoup:
         """Получает содержимое страницы
@@ -56,17 +77,16 @@ class NasdaqParser:
         for _ in ('Common Stock Historical Stock Prices', 'Capital Stock Historical Stock Prices'):
             title = title.replace(_, '').strip()
 
-        # get_or_create
-        stock, _ = Stock.objects.get_or_create(name=stock, company_name=title)
+        stock, _ = Stock.objects.update_or_create(name=stock, defaults={'company_name': title})
         return stock
 
-    def get_stock_prices(self, stock: str):
+    def get_stock_prices(self, stock_and_url: Tuple):
         """Получает цены для заданной акции и сохраняет в БД
 
         Args:
-            stock (str): Название акции
+            stock_and_url (Tuple): Название акции и url страницы
         """
-        url = self.stocks_prices_url.format(stock=stock)
+        stock, url = stock_and_url
         content = self.get_html_content(url)
         table = content.select('.genTable > div > table > tbody > tr')
         stock = self.get_or_create_stock(content, stock)
@@ -78,7 +98,7 @@ class NasdaqParser:
                     date = datetime.strptime(date_or_time, '%m/%d/%Y')
                 except ValueError:
                     time = datetime.strptime(date_or_time, '%H:%M')
-                    date = timezone.now().replace(hour=time.hour, minute=time.minute)
+                    date = datetime.now().replace(hour=time.hour, minute=time.minute)
                 opn = row.select('td')[1].text.strip().replace(',', '')
                 high = row.select('td')[2].text.strip().replace(',', '')
                 low = row.select('td')[3].text.strip().replace(',', '')
@@ -90,48 +110,17 @@ class NasdaqParser:
                     open=opn, high=high, low=low, close=close, volume=volume
                 )
 
-    def get_insider_trades_page_numbers(self, content: BeautifulSoup) -> List:
-        """Получет номер последней страницы и отдает список с номерами страниц, которые нужно
-        спарсить
-
-        Args:
-            content (BeautifulSoup): HTML content
-
-        Returns:
-            List
-        """
-        # get last page number
-        last_page_link = content.find(id='quotes_content_left_lb_LastPage').get('href')
-        last_page_number = int(last_page_link.split('=')[-1])
-        page_numbers = list(range(1, last_page_number + 1 if last_page_number < 10 else 11))
-        return page_numbers
-
-    def get_insider_trades(self, stock: str):
-        """Получает первую страницу с данными о торговле заданной акцией владельцев компании и
-        вызывает метод парсинга для этой и последующих страниц
-
-        Args:
-            stock (str): Название акции
-        """
-        url = self.insider_trades_url.format(stock=stock)
-        content = self.get_html_content(url)
-        stock = Stock.objects.get(name=stock)
-        page_numbers = self.get_insider_trades_page_numbers(content)
-        page_numbers_with_stock = zip(page_numbers, repeat(stock))
-        with ThreadPool(self.threads) as pool:
-            pool.starmap(self.save_insider_trades, page_numbers_with_stock)
-
-    def save_insider_trades(self, n: int, stock: Stock):
+    def get_insider_trades(self, stock_and_url: Tuple):
         """Получает данные о торговле заданной акцией на заданной странице, а затем сохраняет
          информацию в БД
 
         Args:
-            n (int): Номер страницы
-            stock (str): Название акции
+            stock_and_url (Tuple): Название акции и url страницы
         """
-        url = f'{self.insider_trades_url.format(stock=stock.name.lower())}?page={n}/'
+        stock, url = stock_and_url
         content = self.get_html_content(url)
         table = content.select('.genTable > table > tr')
+        stock, _ = Stock.objects.get_or_create(name=stock)
 
         for row in table:
             insider_name = row.select('td')[0].text.strip()
@@ -143,7 +132,6 @@ class NasdaqParser:
             last_price = row.select('td')[6].text.strip().replace(',', '')
             shares_held = row.select('td')[7].text.strip().replace(',', '')
 
-            # get_or_create
             insider, _ = Insider.objects.get_or_create(full_name=insider_name)
             relation, _ = Relation.objects.get_or_create(
                 position=getattr(Relation.POSITIONS, relation.upper()), stock=stock,
