@@ -89,7 +89,8 @@ class Insider(models.Model):
 class Relation(models.Model):
     POSITIONS = Choices(
         (0, 'OFFICER', 'Officer'),
-        (1, 'DIRECTOR', 'Director')
+        (1, 'DIRECTOR', 'Director'),
+        (2, 'OTHER', 'Other')
     )
 
     position = models.PositiveSmallIntegerField(
